@@ -98,10 +98,16 @@
         .btn-no {
             background: linear-gradient(135deg, #ffc0cb, #ffb6c1);
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
         }
 
         .btn-no:hover {
             background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+        }
+
+        .btn-absolute {
+            position: absolute !important;
+            z-index: 50;
         }
     </style>
 </head>
@@ -233,37 +239,36 @@
         }
 
         // Handle "No" button click
-        noBtn.addEventListener('click', function() {
-            if (noClickCount < messages.length) {
-                // Update message
-                messageBox.innerHTML = `<p class="fade-in">${messages[noClickCount]}</p>`;
-                
-                // Shrink the No button
-                const currentSize = parseFloat(window.getComputedStyle(noBtn).fontSize);
-                const currentPadding = parseFloat(window.getComputedStyle(noBtn).paddingLeft);
-                
-                noBtn.style.fontSize = (currentSize * 0.8) + 'px';
-                noBtn.style.paddingLeft = noBtn.style.paddingRight = (currentPadding * 0.8) + 'px';
-                noBtn.style.paddingTop = noBtn.style.paddingBottom = (currentPadding * 0.8) + 'px';
-                
-                // Grow the Yes button slightly
-                const yesCurrentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-                yesBtn.style.fontSize = (yesCurrentSize * 1.1) + 'px';
-                
-                noClickCount++;
-                
-                // Make button disappear if clicked too many times
-                if (noClickCount >= messages.length - 1) {
-                    setTimeout(() => {
-                        noBtn.style.opacity = '0';
-                        noBtn.style.transform = 'scale(0)';
-                        setTimeout(() => {
-                            noBtn.style.display = 'none';
-                            messageBox.innerHTML = '<p class="fade-in">The "No" option has vanished! ✨<br>Only "Yes" remains! 💕</p>';
-                        }, 400);
-                    }, 2000);
-                }
-            }
+        noBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Update message (cycle through messages)
+            const messageIndex = noClickCount % messages.length;
+            messageBox.innerHTML = `<p class="fade-in">${messages[messageIndex]}</p>`;
+            
+            // Move the No button to a random position
+            noBtn.classList.add('btn-absolute');
+            
+            // Get viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            // Generate random position (keeping button within viewport)
+            const maxX = viewportWidth - btnWidth - 40;
+            const maxY = viewportHeight - btnHeight - 100;
+            const randomX = Math.random() * maxX + 20;
+            const randomY = Math.random() * maxY + 20;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Grow the Yes button slightly for emphasis
+            const yesCurrentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+            yesBtn.style.fontSize = (yesCurrentSize * 1.05) + 'px';
+            
+            noClickCount++;
         });
 
         // Handle "Yes" button click
