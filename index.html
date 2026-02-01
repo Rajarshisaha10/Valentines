@@ -117,7 +117,7 @@
     <div id="floatingHearts" class="fixed inset-0 pointer-events-none"></div>
 
     <!-- Main Container -->
-    <div id="mainContent" class="slide-in relative z-10 text-center bg-white/95 p-12 rounded-[40px] shadow-2xl max-w-2xl mx-4">
+    <div id="mainContent" class="slide-in relative z-10 text-center bg-white/95 p-12 rounded-[40px] shadow-2xl max-w-2xl mx-4 overflow-hidden">
         
         <!-- Cute Bear -->
         <div class="text-8xl mb-6 bounce-animation">
@@ -246,21 +246,20 @@
             const messageIndex = noClickCount % messages.length;
             messageBox.innerHTML = `<p class="fade-in">${messages[messageIndex]}</p>`;
             
-            // Move the No button to a random position
-            noBtn.classList.add('btn-absolute');
-            
-            // Get viewport dimensions
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+            // Move the No button to a random position within the card
+            const card = mainContent;
+            const cardRect = card.getBoundingClientRect();
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
             
-            // Generate random position (keeping button within viewport)
-            const maxX = viewportWidth - btnWidth - 40;
-            const maxY = viewportHeight - btnHeight - 100;
+            // Calculate random position within the card boundaries
+            const maxX = cardRect.width - btnWidth - 40;
+            const maxY = cardRect.height - btnHeight - 40;
             const randomX = Math.random() * maxX + 20;
             const randomY = Math.random() * maxY + 20;
             
+            // Position relative to the card
+            noBtn.style.position = 'absolute';
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             
